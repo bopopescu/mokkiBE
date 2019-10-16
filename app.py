@@ -5,7 +5,7 @@ from forms import RegistrationForm, LoginForm
 
 
 app = Flask(__name__)
-
+#new test
 app.config['SECRET_KEY']='13542764GTH'
 
 
