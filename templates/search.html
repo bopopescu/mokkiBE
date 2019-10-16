@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content%}
+<form method="POST" action="">
+    <center>
+    <H1>Search for Mokki users </H1> <br>
+    Name <input type = "text" placeholder="Search by first or last name" name= "name" /> <br>
+    <input type = "submit">
+    </center>
+</form>
+
+<div>
+        {% for item in dataz %}
+            <tr>
+                <td> {{item}} </td>
+                </br>
+            </tr>
+        {% endfor %}
+</div>
+{% endblock %}

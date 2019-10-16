@@ -7,7 +7,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'mokkiDB'
-app.config['MYSQL_DB'] = 8889
+app.config['MYSQL_PORT'] = 8889
 
 mysql = MySQL(app)
 
@@ -20,7 +20,7 @@ def index():
         lastName = details['lastname']
         email = details['email']
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO MyUsers(firstName, lastName, email) VALUES (%s, %s, %s)", (firstName, lastName, email))
+        cur.execute("INSERT INTO Users(first_name, last_name, company_email) VALUES (%s, %s, %s)", (firstName, lastName, email))
         mysql.connection.commit()
         cur.close()
         return 'success'

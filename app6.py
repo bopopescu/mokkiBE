@@ -17,27 +17,49 @@ def home():
 @app.route('/add_user', methods=['GET', 'POST'])
 def signup():
 
+
+    def checkemail(email, allemails):
+        if email in allemails:
+            return True
+        return False
+
     if request.method == "POST":
         details = request.form
         firstName = details['firstname']
         lastName = details['lastname']
         email = details['email']
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO Users(first_name, last_name, company_email) VALUES (%s, %s, %s)", (firstName, lastName, email))
-        connection.commit()
-        cursor.close()
-        return 'success'
-    return render_template('signup.html')
+        getemails = "SELECT company_email from Users"
+        mycursor = connection.cursor()
+        mycursor.execute(getemails)
+        allemails = mycursor.fetchall()
+        mycursor.close()
+        if checkemail((email,),allemails) == False:
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO Users(first_name, last_name, company_email) VALUES (%s, %s, %s)", (firstName, lastName, email))
+            connection.commit()
+            cursor.close()
+            msg = 'user added to DB :)'
+            return render_template('add_user.html', msg=msg)
+        else :
+            yocursor = connection.cursor()
+            select_stmt = "SELECT * from Users WHERE company_email = %(company_email)s"
+            yocursor.execute(select_stmt, { 'company_email': email })
+            data = yocursor.fetchall()
+            connection.commit()
+            yocursor.close()
+            msg = 'email already in DB :('
+            return render_template('add_user.html', msg=msg, datav=data)
+    return render_template('add_user.html')
 
 
 @app.route("/search_user_by_fn", methods=['GET','POST'])
 def search():
     if request.method == "POST":
         details = request.form
-        firstName = details['firstname']
+        name = details['name']
         mycursor = connection.cursor()
-        select_stmt = "SELECT * FROM Users WHERE first_name = %(first_name)s"
-        mycursor.execute(select_stmt, {'first_name': firstName})
+        select_stmt= "SELECT * from Users WHERE first_name LIKE %s or last_name LIKE %s"
+        mycursor.execute(select_stmt, (name, name))
         data = mycursor.fetchall()
         connection.commit()
         mycursor.close()
@@ -72,15 +94,6 @@ def register():
     return render_template('register.html', form=form)
 
 
-
-
-
-
-
-
-
-
-
 @app.route("/login")
 def login():
     form = LoginForm()
@@ -89,5 +102,4 @@ def login():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
